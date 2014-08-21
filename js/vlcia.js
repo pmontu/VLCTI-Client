@@ -22,23 +22,34 @@ app.config(function($routeProvider,$httpProvider){
 
 app.controller("receiptController",function($scope,instituteFactory){
 
+  $scope.searchStudentForm = {};
+
+  //  STAGE 0 - STUDENTS
+  var reloadStudents = function(){
+
+    $scope.searchStudentForm.name = ""
+    $scope.searchStudentForm.id = 0;
+
+    refreshStudents();
+  };
+
   //  STAGE 1 - STUDENTS
   var refreshStudents = function(){
 
     //  RESET
     $scope.filterStudent = null;
 
-    //  VALIDATION
+
+    //  FETCH STUDENTS
     var requestData = {
       "name":$scope.searchStudentForm.name,
       "id":$scope.searchStudentForm.id
     }
-
-    //  FETCH STUDENTS
     instituteFactory.getStudents(requestData).success(function(data){
       if(data.length>0)
         $scope.students = data;
     });
+
   };
 
   //  STAGE 2 - RECEIPTS
@@ -48,9 +59,10 @@ app.controller("receiptController",function($scope,instituteFactory){
 
   $scope.refreshStudents = refreshStudents;
   $scope.refreshReceipts = refreshReceipts;
+  $scope.reloadStudents = reloadStudents;
 
   //  INITIALISE
-  //refreshStudents();
+  reloadStudents();
 
 });
 
