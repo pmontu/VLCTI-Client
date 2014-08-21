@@ -1,0 +1,41 @@
+<div class="container">
+
+	<div class="page-header">
+		<h3>Receipts</h3>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">Student</h3>
+		</div>
+		<div class="panel-body">
+			
+			<p>
+				<div class="form-inline">
+					
+					<input class="form-control" type="text" ng-model="searchStudentForm.name" ng-change="refreshStudents()" placeholder="Name" />
+					
+					<input class="form-control" type="number" min="1" ng-model="searchStudentForm.id" ng-change="refreshStudents()" placeholder="ID" />
+
+					<button class="btn btn-default" ng-click="refreshStudents()">
+						<span class="glyphicon glyphicon-repeat"></span>
+					</button>
+				</div>
+			</p>
+
+			<table class="table table-hover table-condensed">
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+				</tr>
+				<tr ng-repeat="student in students | filter:filterStudent" ng-click="refreshReceipts(student)">
+					<td>{{student.id}}</td>
+					<td>{{student.name}}</td>
+				</tr>
+			</table>
+
+		</div>
+	</div>
+
+	
+</div>
