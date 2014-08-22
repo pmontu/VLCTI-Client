@@ -13,7 +13,7 @@
 			<p>
 				<div class="form-inline">
 					
-					<input class="form-control" type="text" ng-model="searchStudentForm.name" ng-change="refreshStudents()" placeholder="Name" />
+					<input class="form-control" type="text" ng-model="searchStudentForm.name" ng-change="filter()" placeholder="Name" />
 					
 					<input class="form-control" type="number" min="1" ng-model="searchStudentForm.id" ng-change="refreshStudents()" placeholder="ID" />
 
@@ -25,8 +25,8 @@
 
 			<table class="table table-hover table-condensed">
 				<tr>
-					<th><button ng-click="orderByStudents('id')" class="btn btn-link btn-lg">ID</button></th>
-					<th><button ng-click="orderByStudents('name')" class="btn btn-link btn-lg">Name</button></th>
+					<th><button ng-click="orderByStudents('id',sortDirection=!sortDirection)" class="btn btn-link btn-lg">ID</button></th>
+					<th><button ng-click="orderByStudents('name',sortDirection=!sortDirection)" class="btn btn-link btn-lg">Name</button></th>
 				</tr>
 				<tr ng-repeat="student in students | filter:filterStudent" ng-click="refreshContracts(student)">
 					<td>{{student.id}}</td>
@@ -34,7 +34,7 @@
 				</tr>
 			</table>
 
-			<div ng-controller="paginationController">
+			<div ng-controller="paginationController" ng-if="!filterStudent">
 				<pagination direction-links="false" boundary-links="true" total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()" max-size="maxSize" items-per-page="itemsPerPage"></pagination>
 			</div>
 

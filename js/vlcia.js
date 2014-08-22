@@ -30,18 +30,19 @@ app.controller('studentController',function($scope,instituteFactory){
   $scope.searchStudentForm = {};
 
   //  STAGE 0 - STUDENTS
-  var reloadStudents = function(){
+  $scope.reloadStudents = function(){
 
     $scope.searchStudentForm.name = "";
     $scope.searchStudentForm.id = 0;
     $scope.searchStudentForm.orderBy = "id";
     $scope.sortDirection = true;
+    $scope.page = 1;
 
-    refreshStudents();
+    $scope.refreshStudents();
   };
 
   //  STAGE 1 - STUDENTS
-  var refreshStudents = function(){
+  $scope.refreshStudents = function(){
 
     //  RESET
     $scope.filterStudent = null;
@@ -53,69 +54,67 @@ app.controller('studentController',function($scope,instituteFactory){
       "id":$scope.searchStudentForm.id,
       "orderby":$scope.searchStudentForm.orderBy,
       "items":4,
-      "page":1,
+      "page":$scope.page,
       "direction":$scope.sortDirection
     }
     instituteFactory.getStudents(requestData).success(function(data){
       if(data.students.length>0){
         $scope.students = data.students;
         
-        $scope.$broadcast('student',requestData);
+        //  SEND MESSAGE TO PAGER
+        requestDataPager = {
+          totalItems:data.totallength,
+          currentPage:requestData.page,
+          itemsPerPage:requestData.items
+
+        };
+        $scope.$broadcast('initPagination',requestDataPager);
       }
 
     });
 
   };
 
-  var orderByStudents = function(column){
-    //  COLUMN & SORT DIRECTION
-    if($scope.searchStudentForm.orderBy == column){
-      if($scope.sortDirection == true)
-        $scope.sortDirection = false;
-      else
-        $scope.sortDirection = true;
-    }
-    else
-      $scope.sortDirection = true;
+  $scope.orderByStudents = function(column){
     $scope.searchStudentForm.orderBy = column;
+    $scope.page = 1;
     $scope.refreshStudents();
   };
 
 
   //  STAGE 2 - RECEIPTS
-  var refreshContracts = function(student){
+  $scope.refreshContracts = function(student){
     $scope.filterStudent = student;
 
   };
 
+  $scope.filter = function(){
+    $scope.page = 1;
+    $scope.refreshStudents();
+  }
 
-
-  $scope.refreshStudents = refreshStudents;
-  $scope.refreshContracts = refreshContracts;
-  $scope.reloadStudents = reloadStudents;
-  $scope.orderByStudents = orderByStudents;
+  $scope.$on('pageChanged',function(event,data){
+    $scope.page = data;
+    console.log(data);
+    $scope.refreshStudents();
+  });
 
   //  INITIALISE
-  reloadStudents();
+  $scope.reloadStudents();
 });
 
 
 app.controller('paginationController', function ($scope) {
-  $scope.totalItems = 9;
-  $scope.currentPage = 1;
-  $scope.itemsPerPage = 3;
   $scope.maxSize = 5;
 
-  $scope.setPage = function (pageNo) {
-    $scope.currentPage = pageNo;
-  };
-
   $scope.pageChanged = function() {
-    console.log('Page changed to: ' + $scope.currentPage);
+    $scope.$emit('pageChanged',$scope.currentPage);
   };
 
-  $scope.$on('student',function(event,data){
-    console.log("on student");
+  $scope.$on('initPagination',function(event,data){
+    $scope.totalItems = data.totalItems;
+    $scope.currentPage = data.currentPage;
+    $scope.itemsPerPage = data.itemsPerPage;
   });
 
 });
