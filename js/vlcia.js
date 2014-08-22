@@ -35,6 +35,7 @@ app.controller('studentController',function($scope,instituteFactory){
     $scope.searchStudentForm.name = "";
     $scope.searchStudentForm.id = 0;
     $scope.searchStudentForm.orderBy = "id";
+    $scope.sortDirection = true;
 
     refreshStudents();
   };
@@ -51,8 +52,9 @@ app.controller('studentController',function($scope,instituteFactory){
       "name":$scope.searchStudentForm.name,
       "id":$scope.searchStudentForm.id,
       "orderby":$scope.searchStudentForm.orderBy,
-      "items":2,
-      "page":1
+      "items":4,
+      "page":1,
+      "direction":$scope.sortDirection
     }
     instituteFactory.getStudents(requestData).success(function(data){
       if(data.students.length>0){
@@ -66,6 +68,15 @@ app.controller('studentController',function($scope,instituteFactory){
   };
 
   var orderByStudents = function(column){
+    //  COLUMN & SORT DIRECTION
+    if($scope.searchStudentForm.orderBy == column){
+      if($scope.sortDirection == true)
+        $scope.sortDirection = false;
+      else
+        $scope.sortDirection = true;
+    }
+    else
+      $scope.sortDirection = true;
     $scope.searchStudentForm.orderBy = column;
     $scope.refreshStudents();
   };
@@ -104,7 +115,7 @@ app.controller('paginationController', function ($scope) {
   };
 
   $scope.$on('student',function(event,data){
-    console.log(data);
+    console.log("on student");
   });
 
 });
